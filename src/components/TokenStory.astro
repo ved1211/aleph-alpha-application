@@ -1,0 +1,187 @@
+---
+import splits from "../data/token-splits.json";
+import TokenDemo from "./TokenDemo.astro";
+
+const WORD = "Datenschutzgrundverordnung";
+const pieces: string[] = splits.words[WORD].pieces;
+const splitLabel = `${WORD}, split by the Llama 3.1 tokenizer into ${pieces.length} pieces: ${pieces.join(", ")}.`;
+---
+
+<section id="reading" class="reading" aria-labelledby="reading-title">
+  <div class="reading__pin" data-reading-pin>
+    <div class="wrap reading__stage">
+      <h2 id="reading-title" class="eyebrow">How most AI reads</h2>
+
+      <div class="tok" data-tok>
+        <div class="tok__figure">
+          <p class="tok__word" role="img" aria-label={splitLabel} data-tok-word data-wc-join>
+            <span class="tok__whole" aria-hidden="true" data-tok-whole></span>{
+              pieces.map((piece, i) => (
+                <span class="tok__piece" aria-hidden="true" data-tok-piece style={`--chip: var(--chip-${(i % 7) + 1})`}><span class="tok__piece-bg" data-tok-bg />{piece}</span>
+              ))
+            }
+          </p>
+          <p class="tok__count" data-tok-count="split"><strong>{pieces.length}</strong> pieces</p>
+          <p class="tok__count tok__count--overlay" data-tok-count="whole" data-js-only><strong>1</strong> word</p>
+        </div>
+
+        <div class="tok__captions">
+          <p class="tok__caption" data-tok-caption="split">Most AI models don't read whole words. A tokenizer first chops text into pieces.</p>
+          <div class="tok__static-whole" data-static-only>
+            <p class="tok__word tok__word--whole" data-wc-join role="img" aria-label={`${WORD}, read as one whole word.`}>
+              <span aria-hidden="true">{WORD}</span>
+            </p>
+            <p class="tok__count"><strong>1</strong> word</p>
+          </div>
+          <p class="tok__caption" data-tok-caption="whole">Aleph Alpha Research builds models that read whole words, built up from their characters.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <TokenDemo />
+</section>
+
+<style>
+  .reading {
+    position: relative;
+    background: var(--color-paper);
+  }
+
+  .reading__pin {
+    display: grid;
+    align-items: center;
+    padding-block: clamp(4rem, 12vh, 7rem);
+  }
+
+  .reading__stage {
+    text-align: center;
+  }
+
+  .tok__figure {
+    position: relative;
+    display: grid;
+    justify-items: center;
+  }
+
+  .tok__word {
+    position: relative;
+    display: inline-flex;
+    margin: 0.5rem 0 0;
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 5.4vw, 4.4rem);
+    font-weight: 450;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .tok__piece {
+    position: relative;
+    isolation: isolate;
+    display: inline-block;
+  }
+
+  .tok__piece + .tok__piece {
+    margin-left: 0.28em;
+  }
+
+  .tok__piece-bg {
+    position: absolute;
+    inset: 0.02em -0.07em;
+    z-index: -1;
+    border-radius: 0.16em;
+    background: var(--chip);
+  }
+
+  .tok__whole {
+    display: none;
+  }
+
+  .tok__count {
+    margin: 0.9rem 0 0;
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+  }
+
+  .tok__count strong {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-right: 0.2rem;
+  }
+
+  .tok__count--overlay {
+    display: none;
+  }
+
+  .tok__captions {
+    margin: 1.75rem auto 0;
+  }
+
+  .tok__caption {
+    max-width: 36rem;
+    margin: 0 auto;
+    font-family: var(--font-serif);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    line-height: 1.3;
+  }
+
+  .tok__static-whole {
+    margin: 3rem 0 1.5rem;
+  }
+
+  .tok__word--whole {
+    padding: 0.08em 0.2em;
+    border-radius: 0.2em;
+    background: var(--color-amber-soft);
+    box-shadow: inset 0 0 0 2px var(--color-amber);
+  }
+
+  /* With the motion script running, the two states share one stage. */
+  :global(.motion) .reading__pin {
+    min-height: 100svh;
+  }
+
+  :global(.motion) .tok__piece + .tok__piece {
+    margin-left: 0;
+  }
+
+  :global(.motion) .tok__whole {
+    display: block;
+    position: absolute;
+    inset: -0.06em -0.2em;
+    border-radius: 0.2em;
+    background: var(--color-amber-soft);
+    box-shadow: inset 0 0 0 2px var(--color-amber);
+    z-index: -1;
+  }
+
+  :global(.motion) .tok__word {
+    isolation: isolate;
+  }
+
+  :global(.motion) [data-static-only] {
+    display: none;
+  }
+
+  :global(.motion) .tok__figure > .tok__count {
+    grid-area: 2 / 1;
+  }
+
+  :global(.motion) .tok__count--overlay {
+    display: block;
+  }
+
+  :global(.motion) .tok__figure > .tok__word {
+    grid-area: 1 / 1;
+  }
+
+  :global(.motion) .tok__captions {
+    display: grid;
+  }
+
+  :global(.motion) .tok__caption {
+    grid-area: 1 / 1;
+  }
+</style>

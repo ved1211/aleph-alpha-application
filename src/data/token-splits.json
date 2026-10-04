@@ -1,0 +1,136 @@
+{
+  "tokenizer": "Xenova/Meta-Llama-3.1-Tokenizer",
+  "computedAt": "2026-10-03T08:51:53.305Z",
+  "words": {
+    "Datenschutzgrundverordnung": {
+      "ids": [
+        46796,
+        47845,
+        34097,
+        60885,
+        424,
+        541,
+        47721
+      ],
+      "pieces": [
+        "Dat",
+        "ensch",
+        "utz",
+        "grund",
+        "ver",
+        "ord",
+        "nung"
+      ]
+    },
+    "The committee will publish its findings next week.": {
+      "ids": [
+        791,
+        13093,
+        690,
+        3498,
+        1202,
+        14955,
+        1828,
+        2046,
+        13
+      ],
+      "pieces": [
+        "The",
+        " committee",
+        " will",
+        " publish",
+        " its",
+        " findings",
+        " next",
+        " week",
+        "."
+      ]
+    },
+    "Tekoäly auttaa meitä ymmärtämään kieltä paremmin.": {
+      "ids": [
+        56815,
+        78,
+        2357,
+        398,
+        3154,
+        2629,
+        64,
+        757,
+        65421,
+        379,
+        3906,
+        2357,
+        3423,
+        67997,
+        60446,
+        20548,
+        3903,
+        2357,
+        24068,
+        76,
+        1083,
+        13
+      ],
+      "pieces": [
+        "Tek",
+        "o",
+        "ä",
+        "ly",
+        " aut",
+        "ta",
+        "a",
+        " me",
+        "itä",
+        " y",
+        "mm",
+        "ä",
+        "rt",
+        "äm",
+        "ään",
+        " ki",
+        "elt",
+        "ä",
+        " pare",
+        "m",
+        "min",
+        "."
+      ]
+    },
+    "The comittee will pubilsh its findigns next week.": {
+      "ids": [
+        791,
+        470,
+        275,
+        6684,
+        690,
+        6814,
+        321,
+        939,
+        1202,
+        1505,
+        625,
+        82,
+        1828,
+        2046,
+        13
+      ],
+      "pieces": [
+        "The",
+        " com",
+        "it",
+        "tee",
+        " will",
+        " pub",
+        "il",
+        "sh",
+        " its",
+        " find",
+        "ign",
+        "s",
+        " next",
+        " week",
+        "."
+      ]
+    }
+  }
+}

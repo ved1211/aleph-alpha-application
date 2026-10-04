@@ -1,0 +1,243 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+// Shows photo.jpg from the project folder if it exists.
+const photos = import.meta.glob<{ default: ImageMetadata }>("/photo.{jpg,jpeg,png}", { eager: true });
+const photo = Object.values(photos)[0]?.default;
+
+type Stop = {
+  place?: string;
+  next?: boolean;
+  title?: string;
+  meta?: string;
+  text?: string;
+  note?: string;
+};
+
+// Only the facts provided by Ved. Places on the line: Mumbai, Neu-Ulm, Heidelberg.
+const stops: Stop[] = [
+  {
+    place: "Mumbai",
+    title: "Founding member, Maestro Music Institute",
+    meta: "2020 to 2024",
+    text: "Taught piano to more than 400 students.",
+    note: "Teaching piano for four years taught me to explain hard things simply.",
+  },
+  {
+    title: "Junior Project Manager, Greenox Tech",
+    meta: "2024",
+    text: "Aligned design, engineering and sales on one delivery plan.",
+  },
+  {
+    title: "Technical Program Manager, SuperAGI",
+    meta: "2024 to 2025",
+    text: "Ran delivery across 6 products and introduced 2-week sprints that raised the task completion rate by 30%.",
+  },
+  {
+    place: "Neu-Ulm",
+    title: "M.Sc. Digital Innovation Management",
+    meta: "Hochschule Neu-Ulm, since 2025",
+  },
+  {
+    title: "Website Marketing Manager (voluntary)",
+    meta: "TUM Business Game, since 2026",
+  },
+  { place: "Heidelberg", next: true },
+];
+
+---
+
+<section class="chapter who" aria-labelledby="who-title">
+  <div class="wrap who__inner">
+    <div class="who__intro">
+      {photo && <Image src={photo} alt="Ved Gawade" width={256} height={256} class="who__photo" />}
+      <h2 id="who-title" class="who__title">Who I am</h2>
+    </div>
+
+    <div class="journey-wrap" data-journey>
+    <svg class="journey__line" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 2 100">
+      <line x1="1" y1="0" x2="1" y2="100" class="journey__line-base"></line>
+      <line x1="1" y1="0" x2="1" y2="100" class="journey__line-draw" data-journey-line></line>
+    </svg>
+    <ol class="journey" role="list">
+      {
+        stops.map((stop) => (
+          <li class:list={["journey__item", { "journey__item--place": stop.place, "journey__item--next": stop.next }]} data-journey-item>
+            <span class="journey__marker" aria-hidden="true" />
+            {stop.place && (
+              <p class="journey__place">
+                {stop.place}
+                {stop.next && <span class="journey__next">Next?</span>}
+              </p>
+            )}
+            {stop.title && (
+              <div class="journey__card">
+                <h3 class="journey__title">{stop.title}</h3>
+                {stop.meta && <p class="journey__meta">{stop.meta}</p>}
+                {stop.text && <p class="journey__text">{stop.text}</p>}
+                {stop.note && <p class="journey__note">{stop.note}</p>}
+              </div>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .who {
+    overflow: hidden;
+    isolation: isolate;
+    padding-bottom: 7rem;
+  }
+
+
+
+
+  .who__intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .who__photo {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-amber-soft);
+  }
+
+  .who__title {
+    margin: 0;
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+  }
+
+  .journey-wrap {
+    --rail: 2.25rem;
+    position: relative;
+    max-width: 40rem;
+  }
+
+  .journey {
+    display: grid;
+    gap: 1.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .journey__line {
+    position: absolute;
+    left: calc(var(--rail) / 2 - 1px);
+    top: 0.8rem;
+    width: 2px;
+    height: calc(100% - 1.76rem);
+    overflow: visible;
+  }
+
+  .journey__item--next .journey__place {
+    margin-bottom: 0;
+  }
+
+  .journey__line line {
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .journey__line-base {
+    stroke: var(--color-line);
+    stroke-dasharray: 3 5;
+  }
+
+  .journey__line-draw {
+    stroke: var(--color-amber);
+  }
+
+  .journey__item {
+    position: relative;
+    padding-left: calc(var(--rail) + 0.5rem);
+  }
+
+  .journey__marker {
+    position: absolute;
+    left: calc(var(--rail) / 2 - 0.4rem);
+    top: 0.35rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: var(--color-paper);
+    border: 2px solid var(--color-amber);
+  }
+
+  .journey__item--place .journey__marker {
+    left: calc(var(--rail) / 2 - 0.6rem);
+    top: 0.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    background: var(--color-amber);
+  }
+
+  .journey__item--next .journey__marker {
+    background: var(--color-paper);
+    border-style: dashed;
+  }
+
+  .journey__place {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    line-height: 1.1;
+  }
+
+  .journey__next {
+    margin-left: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-amber-ink);
+  }
+
+  .journey__card {
+    padding: 1rem 1.1rem;
+    background: #fffdf8;
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+  }
+
+  .journey__title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .journey__meta {
+    margin: 0.15rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-ink-soft);
+  }
+
+  .journey__text {
+    margin: 0.5rem 0 0;
+  }
+
+  .journey__note {
+    margin: 0.75rem 0 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--color-amber);
+    color: var(--color-ink-soft);
+  }
+
+
+
+
+</style>

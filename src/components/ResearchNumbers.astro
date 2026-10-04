@@ -1,0 +1,151 @@
+---
+// Arches of the bridge, drawn left to right.
+const arches = Array.from({ length: 7 }, (_, i) => {
+  const x1 = 70 + i * 97 + 9;
+  const x2 = 70 + (i + 1) * 97 - 9;
+  return `M${x1} 352 L${x1} 330 A${(x2 - x1) / 2} 28 0 0 1 ${x2} 330 L${x2} 352`;
+});
+const houses = [866, 906, 1046, 1086].map(
+  (x) => `M${x} 300 L${x} 262 L${x + 18} 242 L${x + 36} 262 L${x + 36} 300`,
+);
+---
+
+<section class="chapter research" aria-labelledby="research-title">
+  <div class="drawing drawing--heidelberg" aria-hidden="true" data-parallax="far">
+    <svg viewBox="0 0 1200 410" preserveAspectRatio="xMidYMax meet">
+      <title>Line drawing of Heidelberg's Old Bridge and castle</title>
+      <!-- hill and castle -->
+      <path class="stroke" d="M520 290 C 640 250, 720 196, 830 168 S 1010 96, 1200 74"></path>
+      <path class="stroke" d="M905 118 L905 82 C 905 72, 930 72, 930 82 L930 118"></path>
+      <path class="stroke" d="M930 112 L930 70 L960 70 L960 60 L975 60 L975 70 L1010 70 L1010 52 L1016 46 L1022 54 L1028 44 L1034 52 L1040 52 L1040 78 L1080 78 L1080 100"></path>
+      <path class="stroke" d="M942 84 L942 96 M954 84 L954 96 M1022 66 L1022 78 M1052 88 L1052 98 M1066 88 L1066 98"></path>
+      <path class="stroke" d="M846 176 c -9 -14 9 -24 17 -13 c 8 -11 24 -1 15 12 M884 150 c -8 -12 8 -20 15 -11 c 7 -9 21 0 13 11 M1100 92 c -8 -12 8 -20 15 -11 c 7 -9 21 0 13 11"></path>
+      <!-- old town -->
+      {houses.map((d) => <path class="stroke" d={d} />)}
+      <path class="stroke" d="M975 300 L975 232 L1005 232 L1005 300 M972 232 L990 176 L1008 232"></path>
+      <!-- bridge gate -->
+      <path class="stroke" d="M760 352 L760 206 L792 206 L792 352 M828 352 L828 206 L860 206 L860 352 M792 236 L828 236"></path>
+      <path class="stroke" d="M796 352 L796 292 A14 16 0 0 1 824 292 L824 352"></path>
+      <path class="stroke" d="M758 206 C 758 190, 776 186, 776 168 C 776 186, 794 190, 794 206 M776 168 L776 152 M826 206 C 826 190, 844 186, 844 168 C 844 186, 862 190, 862 206 M844 168 L844 152"></path>
+      <path class="stroke" d="M772 232 L772 244 M780 232 L780 244 M840 232 L840 244 M848 232 L848 244"></path>
+      <!-- bridge -->
+      <path class="stroke" d="M60 286 L760 286 M60 298 L760 298"></path>
+      {arches.map((d) => <path class="stroke" d={d} />)}
+      <!-- river -->
+      <path class="stroke" d="M0 356 L1200 356"></path>
+      <path class="stroke" d="M110 376 L250 376 M420 382 L560 382 M730 376 L840 376 M980 384 L1090 384"></path>
+    </svg>
+  </div>
+
+  <div class="wrap research__inner">
+    <h2 id="research-title" class="eyebrow">The research</h2>
+    <ul class="stats" role="list">
+      <li class="stat" data-stat>
+        <p class="stat__num" data-wc-join><span data-count-to="70">70</span>B</p>
+        <p class="stat__text">Up to 70 billion parameters, the numbers a model learns.</p>
+      </li>
+      <li class="stat" data-stat>
+        <p class="stat__num stat__num--frac" data-wc-join><span class="sr-only">One third</span><span aria-hidden="true"><sup>1</sup>⁄<sub>3</sub></span></p>
+        <p class="stat__text">Competitive with tokenizer-based models on a third of Llama 3.1’s training data.</p>
+      </li>
+      <li class="stat" data-stat>
+        <p class="stat__num"><span data-count-to="200">200</span></p>
+        <p class="stat__text">Checkpoints, snapshots saved during training, shared with researchers.</p>
+      </li>
+    </ul>
+    <p class="research__source">
+      Source: <a href="https://arxiv.org/abs/2603.15953">arXiv 2603.15953</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .research {
+    background: var(--color-paper-deep);
+    overflow: hidden;
+    isolation: isolate;
+    padding-bottom: clamp(12rem, 30vw, 22rem);
+  }
+
+  .drawing--heidelberg {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    opacity: 0.4;
+    z-index: -1;
+  }
+
+  .drawing--heidelberg svg {
+    flex: none;
+    width: max(100%, 760px);
+  }
+
+  /* On narrow screens show the right side: bridge gate, old town and castle. */
+  @media (max-width: 760px) {
+    .drawing--heidelberg {
+      justify-content: flex-end;
+    }
+  }
+
+  .research__inner {
+    position: relative;
+  }
+
+  .stats {
+    display: grid;
+    gap: 2.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 820px) {
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  .stat {
+    border-top: 2px solid var(--color-ink);
+    padding-top: 1rem;
+  }
+
+  .stat__num {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(4.5rem, 12vw, 7.5rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .stat__num--frac sup,
+  .stat__num--frac sub {
+    font-size: 0.55em;
+    line-height: 0;
+  }
+
+  .stat__num--frac sup {
+    vertical-align: 0.6em;
+  }
+
+  .stat__num--frac sub {
+    vertical-align: -0.05em;
+  }
+
+  .stat__text {
+    margin: 0.75rem 0 0;
+    max-width: 22rem;
+    font-size: 1.1rem;
+  }
+
+  .research__source {
+    margin: 2.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+</style>

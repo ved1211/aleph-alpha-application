@@ -1,0 +1,265 @@
+---
+import { FACTS_CHECKED, TOKENIZER_ID } from "../config";
+
+const hfApi = (repo: string, kind: "models" | "datasets" = "models") =>
+  `https://huggingface.co/api/${kind}/${repo}?expand[]=downloads&expand[]=downloadsAllTime&expand[]=likes`;
+
+// Checked on 3 October 2026. Every row is listed in research-notes.md.
+const hfRows = [
+  { repo: "Aleph-Alpha-Research/tfree-hat-pretrained-7b-base", d30: "389", all: "4,774", likes: "17" },
+  { repo: "Aleph-Alpha/llama-tfree-hat-pretrained-7b-dpo", d30: "204", all: "1,985", likes: "10" },
+  { repo: "Aleph-Alpha/llama-3_1-8b-tfree-hat-base", d30: "263", all: "1,267", likes: "21" },
+  { repo: "Aleph-Alpha/llama-3_1-8b-tfree-hat-sft", d30: "257", all: "1,272", likes: "12" },
+  { repo: "Aleph-Alpha/llama-3_1-8b-tfree-hat-dpo", d30: "276", all: "1,894", likes: "16" },
+  { repo: "Aleph-Alpha/llama-3_1-70b-tfree-hat-sft", d30: "218", all: "1,473", likes: "3" },
+];
+const ghRows = [
+  { repo: "magma", stars: "490" },
+  { repo: "scaling", stars: "66" },
+  { repo: "trigrams", stars: "60" },
+  { repo: "eval-framework", stars: "42" },
+  { repo: "AtMan", stars: "33" },
+  { repo: "hat-splitter", stars: "5" },
+];
+---
+
+<details class="details" id="details">
+  <summary>Details and sources</summary>
+  <div class="prose-block">
+    <!-- 1. Explainer -->
+    <h3>The research in plain English</h3>
+    <p>
+      A guide for non-specialists to the March 2026 report
+      <a href="https://arxiv.org/abs/2603.15953">“A Family of LLMs Liberated from Static Vocabularies”</a>.
+    </p>
+
+    <h4>What a tokenizer does</h4>
+    <p>
+      Before a language model reads text, a tool called a tokenizer cuts it into pieces called tokens, like a fixed set of rubber stamps
+      made before training. Common English words have their own stamp. In
+      <a href="https://aleph-alpha.com/en/blog/breaking-free-of-tokenizers/">Aleph Alpha’s example</a>, the German
+      <em lang="de">Bundeskanzler</em> needs four pieces while <em>chancellor</em> needs one. The model sees only each stamp’s ID number,
+      so “car” and “cars” can look unrelated.
+    </p>
+
+    <h4>What HAT does differently</h4>
+    <p>
+      HAT (Hierarchical Autoregressive Transformer) drops the stamp set. A small encoder reads the raw bytes, the units computers use to
+      store letters, and condenses each word into one summary. The backbone, the large main part of the model, works one word at a time.
+      A small decoder writes the reply byte by byte. Because HAT starts from letters, similar spellings get similar summaries.
+    </p>
+
+    <h4>What the report shows</h4>
+    <p>
+      The report covers models with up to 70 billion parameters, the adjustable numbers a model learns in training. A 7B model was
+      trained from scratch, and Meta’s Llama 3.1 models (8B and 70B) were converted to HAT. Benchmarks are standard tests for comparing
+      models.
+    </p>
+    <ul>
+      <li>Tokenizer-free models were competitive with tokenizer-based ones, even when trained on one third of Llama 3.1’s data.</li>
+      <li>German ARC Challenge (school science questions): 59.1% for the 7B model, 47.4% for Llama 3.1 8B.</li>
+      <li>On German text, each backbone step covered 6.03 bytes on average, against 3.33 for Llama 3.1 8B. Fewer steps can mean less computing.</li>
+      <li>The converted 8B chat model won 71.0% of English and 73.9% of German MT-Bench comparisons, scored by an AI judge, against Llama 3.1 8B Instruct.</li>
+    </ul>
+
+    <h4>Why it matters</h4>
+    <p>
+      Tokenizers are tuned mostly for English, so German and specialist terms, as in contracts or technical specifications, break into
+      more pieces. Because HAT reads letters, the report says it copes better with spelling differences such as typos and adapts to new
+      languages and fields with further training.
+    </p>
+
+    <h4>What it does not show yet</h4>
+    <p>
+      The models cover English and German only and were not tuned for code or maths. Under heavy load, current serving software produces
+      less output per second than with a comparable tokenizer-based model. The 70B model is experimental and scores lower than Llama 3.3
+      70B Instruct on some academic tests. The authors say the robustness benefits need more testing.
+    </p>
+
+    <h4>Who can use the models</h4>
+    <p>
+      Six models and 200 checkpoints (snapshots saved during training) are free on Hugging Face under the Open Aleph License. A license
+      sets the legal terms of use, and this one covers only non-commercial, non-administrative uses such as research and teaching.
+    </p>
+
+    <!-- 2. Release kit -->
+    <h3>Sample release kit</h3>
+    <p><strong>Sample drafts</strong> I would prepare for the team’s review. They are not official Aleph Alpha communications.</p>
+
+    <div class="card">
+      <span class="label">Sample draft · LinkedIn post</span>
+      <p>
+        Can a language model work without a tokenizer and still compete? Our new report describes tokenizer-free HAT models with up to 70
+        billion parameters, trained in English and German.
+      </p>
+      <p>Two findings:</p>
+      <p>
+        → Our 7B model, trained from scratch on one third of Llama 3.1’s data budget, is competitive with Llama 3.1 8B.<br />
+        → On German text our models need fewer steps: 6.03 bytes per step on a German knowledge test, compared with 3.33 for Llama 3.1 8B.
+      </p>
+      <p>Models, 200 training checkpoints and our evaluation framework are public, so you can check the numbers yourself.</p>
+      <p>Report: arxiv.org/abs/2603.15953<br />Models: huggingface.co/Aleph-Alpha and huggingface.co/Aleph-Alpha-Research</p>
+    </div>
+
+    <div class="card">
+      <span class="label">Sample draft · Conference talk abstract</span>
+      <h4>Training language models without a tokenizer: lessons from HAT models up to 70B parameters</h4>
+      <p>
+        Most language models depend on a tokenizer, a fixed vocabulary learned before training and usually tuned for English. We present
+        the Hierarchical Autoregressive Transformer (HAT), in which small byte-level encoder and decoder modules surround a word-level
+        backbone. We compare two routes: training a 7B model from scratch on nearly 4 trillion words, and converting pre-trained Llama 3.1
+        8B and 70B models. We share English and German benchmark results, compression gains and what it took to serve hierarchical models
+        in vLLM. We close with open questions and our 200 released checkpoints for studying how models learn.
+      </p>
+    </div>
+
+    <div class="card">
+      <span class="label">Sample draft · 5-slide internal summary</span>
+      <ol>
+        <li><strong>Why:</strong> fixed tokenizers split German and specialist words into many pieces.</li>
+        <li><strong>How:</strong> HAT reads bytes, works in words and writes bytes, with no fixed vocabulary.</li>
+        <li><strong>Results:</strong> German ARC Challenge 59.1% vs 47.4%; 6.03 vs 3.33 bytes per step on German text.</li>
+        <li><strong>Limits:</strong> English and German only, no code or maths focus, 70B is experimental.</li>
+        <li><strong>Release:</strong> six models, 200 checkpoints and eval-framework, with license terms.</li>
+      </ol>
+    </div>
+
+    <!-- 3. Reach -->
+    <h3>Research reach: a starting point</h3>
+    <p>
+      Public numbers, checked on {FACTS_CHECKED}, as a baseline for measuring community work. Hugging Face shows downloads for the last
+      30 days; the all-time figure comes from its public API. In October 2026 the 7B base model moved to a new
+      <a href="https://huggingface.co/Aleph-Alpha-Research">Aleph-Alpha-Research</a> organisation on Hugging Face.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Followers</caption>
+        <thead>
+          <tr><th scope="col">Account</th><th scope="col" class="num">Followers</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><a href="https://huggingface.co/api/organizations/Aleph-Alpha/overview">Hugging Face: Aleph-Alpha</a></th><td class="num">406</td></tr>
+          <tr><th scope="row"><a href="https://huggingface.co/api/organizations/Aleph-Alpha-Research/overview">Hugging Face: Aleph-Alpha-Research</a></th><td class="num">139</td></tr>
+          <tr><th scope="row"><a href="https://api.github.com/orgs/Aleph-Alpha-Research">GitHub: Aleph-Alpha-Research</a></th><td class="num">42</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Tokenizer-free models on Hugging Face</caption>
+        <thead>
+          <tr>
+            <th scope="col">Model</th>
+            <th scope="col" class="num">Downloads, 30 days</th>
+            <th scope="col" class="num">Downloads, all time</th>
+            <th scope="col" class="num">Likes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            hfRows.map((r) => (
+              <tr>
+                <th scope="row"><a href={hfApi(r.repo)}>{r.repo.split("/")[1]}</a></th>
+                <td class="num">{r.d30}</td>
+                <td class="num">{r.all}</td>
+                <td class="num">{r.likes}</td>
+              </tr>
+            ))
+          }
+          <tr>
+            <th scope="row"><a href={hfApi("Aleph-Alpha/Aleph-Alpha-GermanWeb", "datasets")}>Aleph-Alpha-GermanWeb (dataset)</a></th>
+            <td class="num">898</td>
+            <td class="num">15,601</td>
+            <td class="num">24</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Most-starred Aleph-Alpha-Research repositories on GitHub</caption>
+        <thead>
+          <tr><th scope="col">Repository</th><th scope="col" class="num">Stars</th></tr>
+        </thead>
+        <tbody>
+          {
+            ghRows.map((r) => (
+              <tr>
+                <th scope="row"><a href={`https://github.com/Aleph-Alpha-Research/${r.repo}`}>{r.repo}</a></th>
+                <td class="num">{r.stars}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p>Star counts come from the <a href="https://api.github.com/orgs/Aleph-Alpha-Research/repos">GitHub API</a>.</p>
+
+    <h4>What other research labs do (examples only)</h4>
+    <ul>
+      <li>
+        <strong>Cohere Labs</strong> runs an <a href="https://cohere.com/research/open-science">Open Science Community</a> with talks by
+        researchers and groups on topics such as multilingual AI and safety. Its <a href="https://cohere.com/research/scholars-program">Scholars Program</a>
+        is a paid, remote-first position that pairs emerging researchers with mentors.
+      </li>
+      <li>
+        <strong>EleutherAI</strong>, a non-profit lab, <a href="https://www.eleuther.ai/about">works mainly in a public Discord server</a>
+        shared by staff, volunteers and outside collaborators. The March 2026 report compares its 200 checkpoints to the 154 per model in
+        EleutherAI’s Pythia suite.
+      </li>
+      <li>
+        <strong>Ai2</strong> releases its <a href="https://allenai.org/olmo">Olmo models</a> with training data, code and checkpoints, and
+        its Olmo page shows projects others built with them.
+      </li>
+    </ul>
+
+    <h4>Ideas I would test</h4>
+    <p>Ideas to test with the team, not plans or promises.</p>
+    <ol>
+      <li>
+        <strong>A checkpoint study circle.</strong> The report says the team has not yet analysed the 200 checkpoints. Inviting a few
+        university groups to study them, with findings collected on one public page, would test whether outside researchers pick them up.
+      </li>
+      <li>
+        <strong>A German evaluation sprint.</strong>
+        <a href="https://github.com/Aleph-Alpha-Research/eval-framework">eval-framework</a> has over 90 tasks and
+        <a href="https://huggingface.co/datasets/Aleph-Alpha/MTBench-German">MTBench-German</a> is public. A one-day online sprint for
+        student teams could show whether shared tools attract new contributors.
+      </li>
+      <li>
+        <strong>An open spelling test.</strong> eval-framework supports perturbation testing, which changes inputs on purpose, for example
+        with typos. A public notebook comparing HAT and tokenizer-based models on misspelled German text would let anyone repeat the test.
+      </li>
+      <li>
+        <strong>“Built with GermanWeb”.</strong>
+        <a href="https://huggingface.co/datasets/Aleph-Alpha/Aleph-Alpha-GermanWeb">Aleph-Alpha-GermanWeb</a> had 898 downloads in 30
+        days, all anonymous. An optional form on the dataset card asking what people built could turn some users into case studies.
+      </li>
+      <li>
+        <strong>Plain-language summaries.</strong> Technical blog posts could get a one-page summary in English and German, like the
+        explainer above. Comparing reading time and shares with and without one would show whether it helps.
+      </li>
+    </ol>
+
+    <!-- 4. Sources -->
+    <h3>Sources</h3>
+    <p>All checked on {FACTS_CHECKED}.</p>
+    <ul class="sources">
+      <li>Report, arXiv 2603.15953 (16 March 2026): <a href="https://arxiv.org/abs/2603.15953">arxiv.org/abs/2603.15953</a></li>
+      <li>Aleph Alpha blog, “Breaking Free of Tokenizers” (20 August 2025): <a href="https://aleph-alpha.com/en/blog/breaking-free-of-tokenizers/">aleph-alpha.com/en/blog/breaking-free-of-tokenizers</a></li>
+      <li>Aleph Alpha blog, “Introducing TFree-HAT 7B” (20 August 2025): <a href="https://aleph-alpha.com/en/blog/introducing-tfree-hat-7b-tokenizer-free-models-achieving-top-tier-multilingual-performance/">aleph-alpha.com/en/blog/introducing-tfree-hat-7b-…</a></li>
+      <li>Model card and license: <a href="https://huggingface.co/Aleph-Alpha-Research/tfree-hat-pretrained-7b-base">tfree-hat-pretrained-7b-base</a>, <a href="https://huggingface.co/Aleph-Alpha-Research/tfree-hat-pretrained-7b-base/blob/main/LICENSE">LICENSE</a>, <a href="https://huggingface.co/Aleph-Alpha/llama-3_1-8b-tfree-hat-dpo">llama-3_1-8b-tfree-hat-dpo</a></li>
+      <li>Word limit of the HAT models (max_word_size 100): <a href="https://huggingface.co/Aleph-Alpha-Research/tfree-hat-pretrained-7b-base/blob/main/config.json">config.json</a></li>
+      <li>Splitting rule: <a href="https://github.com/Aleph-Alpha-Research/hat-splitter">github.com/Aleph-Alpha-Research/hat-splitter</a> (src/split.rs)</li>
+      <li>Llama 3.1 tokenizer used in the demo: <a href={`https://huggingface.co/${TOKENIZER_ID}`}>{TOKENIZER_ID}</a>, run with <a href="https://huggingface.co/docs/transformers.js">transformers.js</a></li>
+      <li>Hugging Face: <a href="https://huggingface.co/Aleph-Alpha">Aleph-Alpha</a>, <a href="https://huggingface.co/Aleph-Alpha-Research">Aleph-Alpha-Research</a></li>
+      <li>GitHub: <a href="https://github.com/Aleph-Alpha-Research">github.com/Aleph-Alpha-Research</a></li>
+      <li>Tools: <a href="https://github.com/Aleph-Alpha-Research/eval-framework">eval-framework</a>, <a href="https://huggingface.co/datasets/Aleph-Alpha/MTBench-German">MTBench-German</a>, <a href="https://huggingface.co/datasets/Aleph-Alpha/Aleph-Alpha-GermanWeb">Aleph-Alpha-GermanWeb</a></li>
+      <li>Other labs: <a href="https://cohere.com/research/open-science">Cohere Labs Open Science</a>, <a href="https://cohere.com/research/scholars-program">Cohere Labs Scholars Program</a>, <a href="https://www.eleuther.ai/about">EleutherAI</a>, <a href="https://allenai.org/olmo">Ai2 Olmo</a></li>
+      <li>Job posting: <a href="https://jobs.ashbyhq.com/AlephAlpha/1722b11a-b67f-4869-aa89-b141dc68fabb">jobs.ashbyhq.com/AlephAlpha</a></li>
+    </ul>
+  </div>
+</details>

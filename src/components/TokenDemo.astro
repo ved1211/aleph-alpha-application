@@ -1,0 +1,236 @@
+---
+import presets from "../data/presets.json";
+import splits from "../data/token-splits.json";
+import { hatSplitWithLimit } from "../lib/hat-split";
+import { chipParts } from "../lib/chips";
+import { TOKENIZER_ID } from "../config";
+
+const first = presets[0];
+const tokPieces: string[] = (splits.words as Record<string, { pieces: string[] }>)[first.text].pieces;
+const hatPieces = hatSplitWithLimit(first.text);
+---
+
+<div class="demo wrap" id="demo" data-demo data-wordcount-exclude>
+  <div class="demo__card">
+    <h3 class="demo__title">Try it yourself</h3>
+
+    <div class="demo__presets" role="group" aria-label="Example texts">
+      {
+        presets.map((p, i) => (
+          <button type="button" class="demo__preset" data-preset={p.text} aria-pressed={i === 0 ? "true" : "false"}>
+            {p.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <label class="sr-only" for="demo-input">Text to split</label>
+    <textarea id="demo-input" class="demo__input" rows="2" maxlength="240" spellcheck="false" autocomplete="off" data-demo-input>{first.text}</textarea>
+
+    <div class="demo__grid">
+      <section class="demo__panel" aria-labelledby="demo-tok-title">
+        <h4 id="demo-tok-title" class="demo__panel-title">Llama 3.1 tokenizer</h4>
+        <p class="demo__count"><span class="demo__num" data-count="tok">{tokPieces.length}</span> pieces</p>
+        <div class="demo__chips" data-chips="tok">
+          {
+            tokPieces.map((piece, i) => {
+              const { space, text } = chipParts(piece);
+              return (
+                <span class="chip" style={`--chip: var(--chip-${(i % 7) + 1})`}>{space && <span class="chip__space">{space}</span>}{text}</span>
+              );
+            })
+          }
+        </div>
+        <p class="demo__status" role="status" data-status></p>
+      </section>
+
+      <section class="demo__panel demo__panel--hat" aria-labelledby="demo-hat-title">
+        <h4 id="demo-hat-title" class="demo__panel-title">HAT word splitter</h4>
+        <p class="demo__count"><span class="demo__num" data-count="hat">{hatPieces.length}</span> words</p>
+        <div class="demo__chips" data-chips="hat">
+          {
+            hatPieces.map((piece) => {
+              const { space, text } = chipParts(piece);
+              return (
+                <span class="chip chip--hat">{space && <span class="chip__space">{space}</span>}{text}</span>
+              );
+            })
+          }
+        </div>
+      </section>
+    </div>
+
+    <p class="demo__note">Simplified illustration. The real model also reads the characters inside each word.</p>
+    <p class="demo__source">
+      A dot (·) marks a space. Left: Meta's Llama 3.1 tokenizer, the model family the paper compares against, loaded from{" "}
+      <a href={`https://huggingface.co/${TOKENIZER_ID}`}>{TOKENIZER_ID}</a>{" "}and run in your browser with{" "}
+      <a href="https://huggingface.co/docs/transformers.js">transformers.js</a>. Right: a JavaScript copy of the splitting rule in Aleph
+      Alpha Research's{" "}<a href="https://github.com/Aleph-Alpha-Research/hat-splitter">hat-splitter</a>. HAT stands for Hierarchical
+      Autoregressive Transformer.
+    </p>
+    <noscript>
+      <p class="demo__status">JavaScript is off, so the demo shows the first example as computed when this page was built.</p>
+    </noscript>
+  </div>
+</div>
+
+<style>
+  .demo {
+    padding-block: 2rem clamp(4rem, 10vh, 7rem);
+    scroll-margin-top: 1rem;
+  }
+
+  .demo__card {
+    max-width: 58rem;
+    margin: 0 auto;
+    padding: clamp(1.1rem, 3vw, 2rem);
+    background: #fffdf8;
+    border: 1px solid var(--color-line);
+    border-radius: 18px;
+    box-shadow: 0 1px 0 rgba(31, 27, 22, 0.04), 0 18px 40px -28px rgba(31, 27, 22, 0.25);
+  }
+
+  .demo__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+
+  .demo__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .demo__preset {
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    font: 500 0.9rem/1.2 var(--font-sans);
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  .demo__preset[aria-pressed="true"] {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .demo__input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem 0.9rem;
+    border: 1.5px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-paper);
+    font: 1.05rem/1.45 var(--font-sans);
+    color: var(--color-ink);
+    resize: vertical;
+  }
+
+  .demo__input:focus {
+    outline: none;
+    border-color: var(--color-amber);
+    box-shadow: 0 0 0 3px var(--color-amber-soft);
+  }
+
+  .demo__grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.1rem;
+  }
+
+  @media (min-width: 760px) {
+    .demo__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .demo__panel {
+    min-width: 0;
+    padding: 1rem;
+    border-radius: 14px;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+  }
+
+  .demo__panel--hat {
+    border-color: var(--color-amber);
+  }
+
+  .demo__panel-title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .demo__count {
+    margin: 0.2rem 0 0.75rem;
+    color: var(--color-ink-soft);
+  }
+
+  .demo__num {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--color-ink);
+    margin-right: 0.25rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .demo__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-height: 2rem;
+  }
+
+  .demo__chips :global(.chip) {
+    display: inline-block;
+    padding: 0.18rem 0.45rem;
+    border-radius: 6px;
+    background: var(--chip, var(--chip-1));
+    font-size: 0.98rem;
+    line-height: 1.35;
+    white-space: pre;
+  }
+
+  .demo__chips :global(.chip--hat) {
+    background: var(--color-amber-soft);
+    box-shadow: inset 0 0 0 1.5px var(--color-amber);
+  }
+
+  .demo__chips :global(.chip__space) {
+    color: var(--color-ink-soft);
+    opacity: 0.7;
+  }
+
+  .demo__status {
+    margin: 0.75rem 0 0;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+
+  .demo__status:empty {
+    display: none;
+  }
+
+  .demo__note {
+    margin: 1.1rem 0 0.4rem;
+    font-weight: 600;
+  }
+
+  .demo__source {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+import "@fontsource-variable/newsreader/wght.css";
+import "@fontsource-variable/instrument-sans/wght.css";
+import "lenis/dist/lenis.css";
+import "../styles/global.css";
+import serifFont from "@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url";
+import sansFont from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url";
+import { DISCLAIMER } from "../config";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const pageUrl = new URL(base, Astro.site).href;
+const ogImage = new URL(`${base}og-image.png`, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Ved Gawade" />
+    <meta name="theme-color" content="#f8f4ec" />
+    <link rel="canonical" href={pageUrl} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sansFont} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Floating letters from German, Finnish, English and Devanagari around the title Tokenizer-free AI, explained." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header>
+      <p class="disclaimer">{DISCLAIMER}</p>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p class="disclaimer disclaimer--footer">{DISCLAIMER}</p>
+    </footer>
+    <script>
+      import "../scripts/main";
+    </script>
+  </body>
+</html>
+
+<style>
+  .disclaimer--footer {
+    border-bottom: 0;
+    border-top: 1px solid var(--color-line);
+    padding-block: 1.5rem 2rem;
+  }
+</style>

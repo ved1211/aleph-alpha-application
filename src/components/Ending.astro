@@ -1,0 +1,103 @@
+---
+import LetterField from "./LetterField.astro";
+import DetailsSources from "./DetailsSources.astro";
+import { LINKEDIN_URL, PORTFOLIO_URL } from "../config";
+
+const heading = "Let’s talk";
+const availability = ["20 h/week, semester", "30 h/week, breaks", "Full time as an internship", "Heidelberg preferred"];
+---
+
+<section class="chapter ending" aria-labelledby="ending-title" data-ending>
+  <div class="ending__stage">
+    <LetterField seed={53} id="ending-letters" />
+    <h2 id="ending-title" class="ending__title" aria-label={heading} data-assemble data-wc-join>
+      {[...heading].map((ch) => (ch === " " ? <span class="ending__space" aria-hidden="true"> </span> : <span class="ending__char" aria-hidden="true" data-char>{ch}</span>))}
+    </h2>
+  </div>
+
+  <div class="wrap ending__inner">
+    <ul class="ending__chips" role="list">
+      {availability.map((item) => <li class="pill">{item}</li>)}
+    </ul>
+    <p class="ending__lang">English C1, German B1</p>
+
+    <div class="ending__actions">
+      <a class="btn" href={LINKEDIN_URL}>LinkedIn</a>
+      <a class="btn btn--ghost" href={PORTFOLIO_URL}>Portfolio</a>
+    </div>
+
+    <div class="ending__details">
+      <DetailsSources />
+    </div>
+  </div>
+</section>
+
+<style>
+  .ending {
+    padding-top: 0;
+  }
+
+  .ending__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 60svh;
+    overflow: hidden;
+  }
+
+  .ending__title {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: clamp(3.2rem, 12vw, 7.5rem);
+    font-weight: 450;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+
+  .ending__char,
+  .ending__space {
+    display: inline-block;
+  }
+
+  .ending__space {
+    width: 0.25em;
+  }
+
+  .ending__inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+
+  .ending__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ending__lang {
+    margin: 1rem 0 0;
+    font-weight: 600;
+  }
+
+  .ending__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .ending__details {
+    width: 100%;
+    max-width: 46rem;
+    margin-top: clamp(4rem, 10vw, 6rem);
+    text-align: left;
+  }
+</style>

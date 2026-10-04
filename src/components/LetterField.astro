@@ -1,0 +1,34 @@
+---
+import { buildLayer, LAYERS } from "../lib/letters";
+
+interface Props {
+  seed: number;
+  id?: string;
+}
+
+const { seed, id } = Astro.props;
+const layers = (Object.keys(LAYERS) as (keyof typeof LAYERS)[]).map((name, i) => ({
+  name,
+  glyphs: buildLayer(name, seed + i * 101),
+}));
+---
+
+<div class="letters" aria-hidden="true" data-letters id={id}>
+  {
+    layers.map((layer) => (
+      <div class={`letters__layer letters__layer--${layer.name}`} data-depth={layer.name}>
+        {layer.glyphs.map((g) => (
+          <span
+            class:list={["glyph", { "glyph--amber": g.tone === "amber", "glyph--desktop": g.desktopOnly }]}
+            style={`left:${g.x}%;top:${g.y}%`}
+          >
+            <span class="glyph__char" lang={g.script === "deva" ? "hi" : undefined} style={`font-size:${g.size}rem;rotate:${g.rotate}deg`}>
+              {g.char}
+            </span>
+            {layer.name === "front" && <span class="glyph__bytes">{g.bytes}</span>}
+          </span>
+        ))}
+      </div>
+    ))
+  }
+</div>
