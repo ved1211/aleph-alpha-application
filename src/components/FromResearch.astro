@@ -7,11 +7,15 @@ const ownerLabel: Record<Owner, string> = {
   legal: "Legal",
 };
 
-const phases: { title: string; tasks: { task: string; owner: Owner }[] }[] = [
+const phases: { title: string; tasks: { task: string; owner: Owner; hint?: string }[] }[] = [
   {
     title: "Two weeks before",
     tasks: [
-      { task: "Freeze results", owner: "research" },
+      {
+        task: "Freeze results",
+        owner: "research",
+        hint: "Stop changing the numbers, so everyone writes about the same final version.",
+      },
       { task: "Check license", owner: "legal" },
       { task: "Draft blog post", owner: "communications" },
     ],
@@ -19,7 +23,7 @@ const phases: { title: string; tasks: { task: string; owner: Owner }[] }[] = [
   {
     title: "Release day",
     tasks: [
-      { task: "Publish weights", owner: "engineering" },
+      { task: "Publish weights", owner: "engineering", hint: "Put the model files online so people can download them." },
       { task: "Publish blog post", owner: "communications" },
       { task: "Answer questions", owner: "research" },
     ],
@@ -31,6 +35,30 @@ const phases: { title: string; tasks: { task: string; owner: Owner }[] }[] = [
       { task: "Track reach", owner: "communications" },
       { task: "Update FAQ", owner: "research" },
     ],
+  },
+];
+
+// Texts as written by Ved.
+const plans = [
+  {
+    title: "Blog posts",
+    text: "Every paper gets a one-page, plain-language summary like this site. I would write it in English, with a German version checked by a native speaker.",
+  },
+  {
+    title: "LinkedIn posts",
+    text: "Each paper or release gets a short post with one clear visual, like a word splitting into pieces. Drafts go to the authors for review before anything is posted.",
+  },
+  {
+    title: "Talks",
+    text: "I would help researchers turn a paper into a conference abstract and slides, and keep track of deadlines.",
+  },
+  {
+    title: "Community",
+    text: "I would start with one small pilot, such as a study circle for the 200 checkpoints, and see who joins before planning anything bigger.",
+  },
+  {
+    title: "Measuring",
+    text: "Every month I would compare downloads, followers and readers with the starting numbers in the details section, so we know what works.",
   },
 ];
 
@@ -46,7 +74,11 @@ const lines = [
 
 <section class="chapter bridge" aria-labelledby="bridge-title">
   <div class="wrap">
-    <h2 id="bridge-title" class="bridge__title">My part: helping more people understand this research.</h2>
+    <h2 id="bridge-title" class="bridge__title">If I join: what I would do</h2>
+    <p class="bridge__lede">
+      Your research team creates the work. My job would be to help it reach people through blog posts, social posts, talks, the
+      community and releases.
+    </p>
 
     <div class="net" data-net>
       <svg class="net__lines" aria-hidden="true">
@@ -60,10 +92,28 @@ const lines = [
         <li class="net__node" style="grid-area: d" data-net-node>Releases</li>
       </ul>
     </div>
+
+    <ul class="plans" role="list">
+      {
+        plans.map((plan) => (
+          <li class="plan" data-plan>
+            <h3 class="plan__title">{plan.title}</h3>
+            <p class="plan__text">{plan.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="plans__more">
+      <a href="#release-kit" data-scroll-link data-open-details>See sample drafts</a>
+    </p>
   </div>
 
   <div class="timeline" data-timeline>
     <div class="wrap timeline__head">
+      <h3 class="timeline__heading">Release checklist: who does what, and when</h3>
+      <p class="timeline__intro">
+        A release is the day a new model goes public. This checklist makes sure nothing is forgotten and every team knows its part.
+      </p>
       <p class="timeline__note">A draft I would adapt to your existing process.</p>
     </div>
     <div class="timeline__viewport">
@@ -71,11 +121,14 @@ const lines = [
         {
           phases.map((phase) => (
             <li class="timeline__panel" data-timeline-panel>
-              <h3 class="timeline__title">{phase.title}</h3>
+              <h4 class="timeline__title">{phase.title}</h4>
               <ul class="timeline__tasks" role="list">
                 {phase.tasks.map((t) => (
                   <li class="task">
-                    <span class="task__text">{t.task}</span>
+                    <span class="task__text">
+                      {t.task}
+                      {t.hint && <span class="task__hint">{t.hint}</span>}
+                    </span>
                     <span class={`owner owner--${t.owner}`}>{ownerLabel[t.owner]}</span>
                   </li>
                 ))}
@@ -97,6 +150,45 @@ const lines = [
     max-width: 18ch;
     margin: 0;
     font-size: clamp(2.2rem, 6vw, 4.2rem);
+  }
+
+  .bridge__lede {
+    max-width: 38rem;
+    margin: 1.25rem 0 0;
+    font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+    color: var(--color-ink-soft);
+  }
+
+  /* Plan cards */
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1rem;
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .plan {
+    padding: 1.25rem 1.25rem 1.35rem;
+    background: #fffdf8;
+    border: 1px solid var(--color-line);
+    border-top: 3px solid var(--color-amber);
+    border-radius: 14px;
+  }
+
+  .plan__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+  }
+
+  .plan__text {
+    margin: 0;
+  }
+
+  .plans__more {
+    margin: 1.25rem 0 0;
+    font-weight: 600;
   }
 
   /* Network of research outputs */
@@ -161,8 +253,20 @@ const lines = [
     margin-top: clamp(3rem, 8vw, 5rem);
   }
 
+  .timeline__heading {
+    max-width: 22ch;
+    margin: 0;
+    font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+  }
+
+  .timeline__intro {
+    max-width: 38rem;
+    margin: 1rem 0 0;
+    font-size: 1.1rem;
+  }
+
   .timeline__note {
-    margin: 0 0 1.25rem;
+    margin: 0.75rem 0 1.25rem;
     font-size: 0.95rem;
     color: var(--color-ink-soft);
   }
@@ -195,6 +299,9 @@ const lines = [
   }
 
   .timeline__title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    line-height: 1.1;
     margin: 0.2rem 0 1rem;
     font-size: clamp(1.5rem, 3vw, 2rem);
   }
@@ -209,7 +316,7 @@ const lines = [
 
   .task {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 0.75rem;
     padding: 0.55rem 0.7rem;
@@ -220,6 +327,20 @@ const lines = [
 
   .task__text {
     font-weight: 500;
+  }
+
+  .task .owner {
+    flex: none;
+    margin-top: 0.1rem;
+  }
+
+  .task__hint {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--color-ink-soft);
   }
 
   /* Pinned horizontal version, only with the motion script on wide screens */

@@ -24,7 +24,7 @@ npm install            # install dependencies
 npm run dev            # local dev server
 npm run build          # static build into dist/
 npm run preview        # serve the build at http://localhost:4321/aleph-alpha-application/
-npm run count-words    # count visible words in the build (limit 300)
+npm run count-words    # count visible words in the build (limit 400)
 npm run tokens         # recompute the stored tokenizer splits (needs internet)
 ```
 

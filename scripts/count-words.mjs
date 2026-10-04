@@ -79,5 +79,5 @@ const text = body
   .replace(/&#39;|&rsquo;/g, "’")
   .replace(/&[a-z#0-9]+;/gi, " ");
 const words = text.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w));
-console.log(`Visible words (${noJs ? "JavaScript off" : "JavaScript on"}): ${words.length} (limit 300)`);
+console.log(`Visible words (${noJs ? "JavaScript off" : "JavaScript on"}): ${words.length} (limit 400)`);
 if (process.argv.includes("--list")) console.log(words.join(" "));

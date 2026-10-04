@@ -31,7 +31,8 @@ function smoothScroll() {
       const target = $(link.hash);
       if (!target) return;
       event.preventDefault();
-      lenis.scrollTo(target);
+      lenis.resize();
+      lenis.scrollTo(target, { offset: -24 });
     });
   });
 }

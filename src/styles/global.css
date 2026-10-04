@@ -345,6 +345,7 @@ a.btn {
 .prose-block h3 {
   margin: 2.5rem 0 0.75rem;
   font-size: 1.6rem;
+  scroll-margin-top: 1.5rem;
 }
 
 .prose-block h4 {
