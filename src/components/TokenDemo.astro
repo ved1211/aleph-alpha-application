@@ -5,7 +5,8 @@ import { hatSplitWithLimit } from "../lib/hat-split";
 import { chipParts } from "../lib/chips";
 import { TOKENIZER_ID } from "../config";
 
-const first = presets[0];
+// The example shown first: the German word from chapter 2.
+const first = presets.find((p) => "default" in p && p.default) ?? presets[0];
 const tokPieces: string[] = (splits.words as Record<string, { pieces: string[] }>)[first.text].pieces;
 const hatPieces = hatSplitWithLimit(first.text);
 ---
@@ -16,8 +17,8 @@ const hatPieces = hatSplitWithLimit(first.text);
 
     <div class="demo__presets" role="group" aria-label="Example texts">
       {
-        presets.map((p, i) => (
-          <button type="button" class="demo__preset" data-preset={p.text} aria-pressed={i === 0 ? "true" : "false"}>
+        presets.map((p) => (
+          <button type="button" class="demo__preset" data-preset={p.text} aria-pressed={p === first ? "true" : "false"}>
             {p.label}
           </button>
         ))
@@ -30,7 +31,7 @@ const hatPieces = hatSplitWithLimit(first.text);
     <div class="demo__grid">
       <section class="demo__panel" aria-labelledby="demo-tok-title">
         <h4 id="demo-tok-title" class="demo__panel-title">Llama 3.1 tokenizer</h4>
-        <p class="demo__count"><span class="demo__num" data-count="tok">{tokPieces.length}</span> pieces</p>
+        <p class="demo__count"><span class="demo__num" data-count="tok">{tokPieces.length}</span> <span data-unit="tok">{tokPieces.length === 1 ? "piece" : "pieces"}</span></p>
         <div class="demo__chips" data-chips="tok">
           {
             tokPieces.map((piece, i) => {
@@ -46,7 +47,7 @@ const hatPieces = hatSplitWithLimit(first.text);
 
       <section class="demo__panel demo__panel--hat" aria-labelledby="demo-hat-title">
         <h4 id="demo-hat-title" class="demo__panel-title">HAT word splitter</h4>
-        <p class="demo__count"><span class="demo__num" data-count="hat">{hatPieces.length}</span> words</p>
+        <p class="demo__count"><span class="demo__num" data-count="hat">{hatPieces.length}</span> <span data-unit="hat">{hatPieces.length === 1 ? "word" : "words"}</span></p>
         <div class="demo__chips" data-chips="hat">
           {
             hatPieces.map((piece) => {
@@ -69,7 +70,7 @@ const hatPieces = hatSplitWithLimit(first.text);
       Autoregressive Transformer.
     </p>
     <noscript>
-      <p class="demo__status">JavaScript is off, so the demo shows the first example as computed when this page was built.</p>
+      <p class="demo__status">JavaScript is off, so the demo shows the German example as computed when this page was built.</p>
     </noscript>
   </div>
 </div>

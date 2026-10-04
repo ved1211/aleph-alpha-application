@@ -1,6 +1,6 @@
 [
   { "id": "english", "label": "English sentence", "text": "The committee will publish its findings next week." },
-  { "id": "german", "label": "German word", "text": "Datenschutzgrundverordnung" },
+  { "id": "german", "label": "German word", "text": "Datenschutzgrundverordnung", "default": true },
   { "id": "finnish", "label": "Finnish sentence", "text": "Tekoäly auttaa meitä ymmärtämään kieltä paremmin." },
   { "id": "typo", "label": "English with typos", "text": "The comittee will pubilsh its findigns next week." }
 ]

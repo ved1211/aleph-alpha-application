@@ -1,10 +1,10 @@
 ---
 import LetterField from "./LetterField.astro";
 import DetailsSources from "./DetailsSources.astro";
-import { LINKEDIN_URL, PORTFOLIO_URL } from "../config";
+import { EMAIL, LINKEDIN_URL, PORTFOLIO_URL } from "../config";
 
 const heading = "Let’s talk";
-const availability = ["20 h/week, semester", "30 h/week, breaks", "Full time as an internship", "Heidelberg preferred"];
+const availability = ["20 h/week, semester", "30 h/week, breaks", "Full time as an internship", "Heidelberg office 2 days a week"];
 ---
 
 <section class="chapter ending" aria-labelledby="ending-title" data-ending>
@@ -24,6 +24,7 @@ const availability = ["20 h/week, semester", "30 h/week, breaks", "Full time as 
     <div class="ending__actions">
       <a class="btn" href={LINKEDIN_URL}>LinkedIn</a>
       <a class="btn btn--ghost" href={PORTFOLIO_URL}>Portfolio</a>
+      <a class="btn btn--ghost" href={`mailto:${EMAIL}`}>Email</a>
     </div>
 
     <div class="ending__details">

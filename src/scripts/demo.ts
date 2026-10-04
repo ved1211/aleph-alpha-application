@@ -46,6 +46,9 @@ export function initDemo() {
   const tokCount = root.querySelector<HTMLElement>('[data-count="tok"]')!;
   const hatCount = root.querySelector<HTMLElement>('[data-count="hat"]')!;
   const status = root.querySelector<HTMLElement>("[data-status]")!;
+  const tokUnit = root.querySelector<HTMLElement>('[data-unit="tok"]')!;
+  const hatUnit = root.querySelector<HTMLElement>('[data-unit="hat"]')!;
+  const unit = (n: number, one: string, many: string) => (n === 1 ? one : many);
 
   let tokenizer: Tokenizer | null = null;
   let loading: Promise<void> | null = null;
@@ -55,15 +58,18 @@ export function initDemo() {
     const words = text ? hatSplitWithLimit(text) : [];
     renderChips(hatChips, words, true);
     hatCount.textContent = String(words.length);
+    hatUnit.textContent = unit(words.length, "word", "words");
 
     if (tokenizer) {
       const pieces = text ? tokenizer.tokenize(text, { add_special_tokens: false }).map(tokenText) : [];
       renderChips(tokChips, pieces, false);
       tokCount.textContent = String(pieces.length);
+      tokUnit.textContent = unit(pieces.length, "piece", "pieces");
     } else {
       // Never show a count that the live tokenizer did not produce.
       tokChips.replaceChildren();
       tokCount.textContent = "–";
+      tokUnit.textContent = "pieces";
     }
   }
 
